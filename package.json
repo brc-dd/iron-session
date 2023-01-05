@@ -22,60 +22,25 @@
   "author": "Vincent Voyer <vincent@codeagain.com>",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
+      "browser": "./dist/index.browser.mjs",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    },
-    "./next": {
-      "import": "./next/dist/index.mjs",
-      "require": "./next/dist/index.js",
-      "types": "./next/dist/index.d.ts"
-    },
-    "./express": {
-      "import": "./express/dist/index.mjs",
-      "require": "./express/dist/index.js",
-      "types": "./express/dist/index.d.ts"
-    },
-    "./koa": {
-      "import": "./koa/dist/index.mjs",
-      "require": "./koa/dist/index.js",
-      "types": "./koa/dist/index.d.ts"
-    },
-    "./edge": {
-      "import": "./edge/dist/index.mjs",
-      "require": "./edge/dist/index.js",
-      "types": "./edge/dist/index.d.ts"
+      "require": "./dist/index.js"
     }
   },
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "files": [
-    "dist/",
-    "next/",
-    "express/",
-    "koa/",
-    "edge/"
+    "dist/"
   ],
   "scripts": {
-    "build": "npm run build:clean && npm run build:src && npm run build:next && npm run build:express && npm run build:koa && npm run build:edge",
-    "build:clean": "rimraf dist/ next/dist express/dist edge/dist koa/dist",
-    "build:edge": "tsup edge/index.ts -d edge/dist",
-    "build:express": "tsup express/index.ts -d express/dist",
-    "build:koa": "tsup koa/index.ts -d koa/dist",
-    "build:next": "tsup next/index.ts -d next/dist",
-    "build:src": "tsup src/index.ts",
-    "installExamples": "(cd examples/express && npm ci) && (cd examples/koa && npm ci) && (cd examples/next.js && npm ci) && (cd examples/next.js-typescript && npm ci)",
-    "lint": "eslint --ext ts,js,jsx,tsx src/ next/ express/ koa/ edge/ examples/",
-    "prepublishOnly": "npm run build && cp next/dist/* next/ && cp express/dist/* express/ && cp edge/dist/* edge/ && cp koa/dist/* koa/",
-    "postpublish": "rm next/*.d.ts next/*.js next/*.map next/*.mjs && rm express/*.d.ts express/*.js express/*.map express/*.mjs && rm koa/*.d.ts koa/*.js koa/*.map koa/*.mjs && rm edge/*.d.ts edge/*.js edge/*.map edge/*.mjs",
-    "test": "jest --coverage --ci && npm run installExamples && npm run lint && tsc --noEmit && npm run build && npm run build:clean",
-    "watch": "npm run build:clean && concurrently \"npm:watch:*\"",
-    "watch:edge": "tsup edge/index.ts -d edge/dist --watch edge/index.ts",
-    "watch:express": "tsup express/index.ts -d express/dist --watch express/index.ts",
-    "watch:koa": "tsup koa/index.ts -d koa/dist --watch koa/index.ts",
-    "watch:next": "tsup next/index.ts -d next/dist --watch next/index.ts",
-    "watch:src": "tsup src/index.ts --watch src/index.ts"
+    "build": "npm run build:clean && npm run build:src",
+    "build:clean": "rimraf dist/",
+    "build:src": "tsup ./src/index.ts --dts --format esm,cjs && tsup ./src/index.browser.ts --format esm",
+    "lint": "eslint --ext ts,js,jsx,tsx src/",
+    "prepublishOnly": "npm run build",
+    "test": "jest --coverage --ci && npm run lint && tsc --noEmit && npm run build && npm run build:clean"
   },
   "prettier": {
     "trailingComma": "all"
@@ -199,20 +164,6 @@
     "timezone": "Europe/Paris",
     "schedule": [
       "before 3am on Monday"
-    ]
-  },
-  "tsup": {
-    "splitting": false,
-    "sourcemap": true,
-    "clean": true,
-    "dts": true,
-    "target": "es2019",
-    "format": [
-      "esm",
-      "cjs"
-    ],
-    "external": [
-      "iron-session"
     ]
   }
 }
